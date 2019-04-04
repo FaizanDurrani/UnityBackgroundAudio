@@ -1,0 +1,16 @@
+{
+    "name": "AndroidBackgroundAudioImplementation",
+    "references": [
+        "BackgroundAudioBase"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Android"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": []
+}

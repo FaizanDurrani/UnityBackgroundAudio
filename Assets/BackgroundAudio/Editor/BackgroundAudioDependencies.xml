@@ -1,0 +1,5 @@
+<dependencies>
+    <androidPackages>
+        <androidPackage spec="com.android.support:support-compat:+"/>
+    </androidPackages>
+</dependencies>

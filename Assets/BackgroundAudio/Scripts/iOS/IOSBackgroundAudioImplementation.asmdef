@@ -1,0 +1,16 @@
+{
+    "name": "IOSBackgroundAudioImplementation",
+    "references": [
+        "BackgroundAudioBase"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "iOS"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": []
+}
