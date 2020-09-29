@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
+#if !UNITY_2019_4_OR_NEWER
 namespace UnitySwift {
     public static class PostProcessor {
         [PostProcessBuild]
@@ -19,8 +20,11 @@ namespace UnitySwift {
                 var proj = new PBXProject();
                 proj.ReadFromFile(projPath);
 
-                var targetGuid = proj.TargetGuidByName(PBXProject.GetUnityTargetName());
-
+#if UNITY_2019_3_OR_NEWER
+                string targetGuid = proj.GetUnityFrameworkTargetGuid();
+#else
+                string targetGuid = proj.TargetGuidByName(PBXProject.GetUnityTargetName());
+#endif
                 //// Configure build settings
                 proj.SetBuildProperty(targetGuid, "ENABLE_BITCODE", "NO");
                 proj.SetBuildProperty(targetGuid, "SWIFT_OBJC_BRIDGING_HEADER", "Libraries/UnitySwift/UnitySwift-Bridging-Header.h");
@@ -32,3 +36,4 @@ namespace UnitySwift {
         }
     }
 }
+#endif
