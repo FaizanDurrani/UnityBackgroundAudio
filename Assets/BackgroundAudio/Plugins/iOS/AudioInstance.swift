@@ -28,7 +28,6 @@ class AudioInstance: AVAudioPlayer, AVAudioPlayerDelegate {
             print("\(#function) called on an audioplayer with no InstanceId");
             return;
         }
-        
         UnityBackgroundAudio.dispose(instanceId: instanceId);
     }
 }
