@@ -11,6 +11,8 @@ public class Sample : MonoBehaviour
     private BackgroundAudioImplementation _androidBackgroundAudio;
     [SerializeField] private Toggle _toggle;
     [SerializeField] private Slider _seekBar;
+    [SerializeField] private Text _speedTex;
+    [SerializeField] private Slider _speedBar;
 
     private void Awake()
     {
@@ -18,6 +20,11 @@ public class Sample : MonoBehaviour
 
         _androidBackgroundAudio.OnAudioStarted += () => UnityMainThreadDispatcher.Instance().Enqueue(() => _seekBar.maxValue = _androidBackgroundAudio.GetDuration());
         _toggle.onValueChanged.AddListener(SetLooping);
+
+    }
+    private void Start()
+    {
+        _speedBar.value=(_androidBackgroundAudio.GetSpeed()/0.25f);
     }
 
     public void Play()
@@ -27,14 +34,14 @@ public class Sample : MonoBehaviour
 
     private void GetAudioFileURI(Action<string> callback)
     {
-        #if UNITY_IOS // IOS can read from StreamingAssets
+#if UNITY_IOS // IOS can read from StreamingAssets
 
         var filePath = Path.Combine(Application.streamingAssetsPath, "SampleAudio.mp3");
         callback?.Invoke(filePath);
         return;
 
-        #endif
-        #if UNITY_ANDROID // Android can't
+#endif
+#if UNITY_ANDROID // Android can't
         var persistantPath = Path.Combine(Application.persistentDataPath, "SampleAudio.mp3");
         var filePath = Path.Combine(Application.streamingAssetsPath, "SampleAudio.mp3");
         Debug.Log($"PersistantPath: {persistantPath}");
@@ -50,7 +57,7 @@ public class Sample : MonoBehaviour
         var req = new UnityWebRequest(filePath, UnityWebRequest.kHttpVerbGET, new DownloadHandlerFile(persistantPath), null);
         var asyncOp = req.SendWebRequest();
         asyncOp.completed += op => { callback?.Invoke(persistantPath); };
-        #endif
+#endif
     }
 
     private void Update()
@@ -84,5 +91,12 @@ public class Sample : MonoBehaviour
     public void SetLooping(bool value)
     {
         _androidBackgroundAudio.SetLoop(value);
+    }
+
+    public void SetSpeed(float value)
+    {
+        var speed = value * 0.25f;
+        _speedTex.text = speed.ToString();
+        _androidBackgroundAudio.SetSpeed(speed);
     }
 }

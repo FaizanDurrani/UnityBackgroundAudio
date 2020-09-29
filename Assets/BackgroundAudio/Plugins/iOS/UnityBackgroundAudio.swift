@@ -9,15 +9,14 @@
 import UIKit
 import AVFoundation
 
-@objc class UnityBackgroundAudio: NSObject {
+@objc public class UnityBackgroundAudio: NSObject {
     
     private static var _players = [Int: AudioInstance]();
     
-    @objc static func initialize(_ instanceId: Int) {
-        
+    @objc public static func initialize(_ instanceId: Int) {
         do{
             let audioSession = AVAudioSession.sharedInstance();
-            try audioSession.setCategory(AVAudioSessionCategoryPlayback);
+            try audioSession.setCategory(AVAudioSession.Category.playback);
             try audioSession.setActive(true);
         } catch {
             print (error);
@@ -25,13 +24,12 @@ import AVFoundation
         print("Successfully initialized player with Id \(instanceId) \n");
     }
     
-    @objc static func play (onInstance instanceId: Int, fromUrl path: String) {
+    @objc public static func play (onInstance instanceId: Int, fromUrl path: String) {
         print("Trying to play from path: \(path)\n");
-        
         do{
             _players.updateValue(try AudioInstance.init(contentsOfURL: URL(fileURLWithPath: path), withId: instanceId), forKey: instanceId);
             let player = _players[instanceId]!;
-            
+            player.enableRate=true;
             if player.prepareToPlay(){
                 player.play();
                 print("Playing instance \(instanceId)");
@@ -45,17 +43,16 @@ import AVFoundation
         }
     }
     
-    @objc static func dispose (instanceId: Int){
+    @objc public static func dispose (instanceId: Int){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
         }
-        
         player.stop();
         _players.removeValue(forKey: instanceId);
     }
     
-    @objc static func pause(instanceId: Int){
+    @objc public static func pause(instanceId: Int){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
@@ -66,7 +63,7 @@ import AVFoundation
         }
     }
     
-    @objc static func resume(instanceId: Int){
+    @objc public static func resume(instanceId: Int){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
@@ -75,11 +72,9 @@ import AVFoundation
         if !isPlaybackOver(onPlayer: player) {
             player.play();
         }
-        
     }
     
-    @objc static func seek(instanceId: Int, forSeconds time: Float){
-        
+    @objc public static func seek(instanceId: Int, forSeconds time: Float){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
@@ -89,7 +84,7 @@ import AVFoundation
         
         if seekTo < 0 {
             player.currentTime = 0;
-        } 
+        }
         else if seekTo > player.duration {
             player.currentTime = player.duration;
         }
@@ -98,63 +93,60 @@ import AVFoundation
         }
     }
     
-    @objc static func getDuration(forInstanceId instanceId: Int)->Float{
-        
+    @objc public static func getDuration(forInstanceId instanceId: Int)->Float{
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return 0;
         }
-        
         return Float(player.duration);
     }
     
-    @objc static func getCurrentPosition(forInstanceId instanceId: Int)->Float{
-        
+    @objc public static func getCurrentPosition(forInstanceId instanceId: Int)->Float{
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return 0;
         }
-        
         return Float(player.currentTime);
     }
     
-    @objc static func setVolume(forInstanceId instanceId: Int, to volume: Float){
-        
+    @objc public static func setVolume(forInstanceId instanceId: Int, to volume: Float){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
         }
-        
         player.volume = volume;
     }
     
-    @objc static func setLoop(forInstanceId instanceId: Int, to value: Bool){
-        
+    @objc public static func setSpeed(forInstanceId instanceId: Int, to speed: Float){
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return;
         }
-        
+        player.rate = speed;
+        //player.prepareToPlay();
+    }
+    
+    @objc public static func setLoop(forInstanceId instanceId: Int, to value: Bool){
+        guard let player = _players[instanceId] else {
+            print("[\(#function)] Could not find instance \(instanceId)");
+            return;
+        }
         player.numberOfLoops = value == true ? -1 : 0;
     }
     
-    @objc static func isPlaying(onInstanceId instanceId: Int) -> Bool {
-        
+    @objc public static func isPlaying(onInstanceId instanceId: Int) -> Bool {
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return false;
         }
-        
         return !isPlaybackOver(onPlayer: player);
     }
     
-    @objc static func isLooping(onInstanceId instanceId: Int) -> Bool {
-        
+    @objc public static func isLooping(onInstanceId instanceId: Int) -> Bool {
         guard let player = _players[instanceId] else {
             print("[\(#function)] Could not find instance \(instanceId)");
             return false;
         }
-        
         return (player.numberOfLoops != 0);
     }
     

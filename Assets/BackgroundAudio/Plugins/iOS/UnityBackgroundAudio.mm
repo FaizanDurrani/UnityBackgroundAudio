@@ -1,8 +1,6 @@
-
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
-// This header file is generated automatically when Xcode build runs.
-#import "unityswift-Swift.h"    // Required
+#import "UnityFramework/UnityFramework-Swift.h"
 
 extern "C" {
     
@@ -46,6 +44,9 @@ extern "C" {
         [UnityBackgroundAudio setLoopForInstanceId:identifier to:value];
     }
     
+    void _setSpeed(const int identifier, const float speed){
+        [UnityBackgroundAudio setSpeedForInstanceId:identifier to:speed];
+    }
     
     bool _isLooping(const int identifier) {
         return [UnityBackgroundAudio isLoopingOnInstanceId:identifier];

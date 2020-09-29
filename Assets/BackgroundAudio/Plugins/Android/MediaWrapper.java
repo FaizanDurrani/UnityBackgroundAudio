@@ -7,6 +7,7 @@ public class MediaWrapper {
     public MediaPlayer player;
     public int instanceId;
     public boolean playing, paused;
+    public float speed;
 
     public MediaWrapper(int instanceId) {
         this.player = new MediaPlayer();
@@ -17,5 +18,6 @@ public class MediaWrapper {
         this.player.reset();
         this.playing = false;
         this.paused = false;
+        this.speed = 1;
     }
 }

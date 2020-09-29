@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
+import android.media.PlaybackParams;
 import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
@@ -37,6 +38,7 @@ public class BackgroundAudioService extends Service {
     private static final String EXTRA_INSTANCE_ID = "instanceId";
     private static final String EXTRA_VOLUME = "volume";
     private static final String EXTRA_LOOP = "loop";
+    private static final String EXTRA_SPEED = "speed";
 
     private static final String ACTION_SET_VOLUME = "volume";
     private static final String ACTION_SET_LOOP = "loop";
@@ -47,6 +49,7 @@ public class BackgroundAudioService extends Service {
     private static final String ACTION_RESUME = "resume";
     private static final String ACTION_SEEK = "seek";
     private static final String ACTION_STOP_SERVICE = "stopService";
+    private static final String ACTION_SET_SPEED = "speed";
 
     private static final String TAG = "BackgroundAudio";
     private volatile static HashMap<Integer, MediaWrapper> usedMediaPlayers = new HashMap<>();
@@ -241,6 +244,23 @@ public class BackgroundAudioService extends Service {
 
                     break;
                 }
+                case ACTION_SET_SPEED:{
+                    if (!usedMediaPlayers.containsKey(instanceId)) break;
+                    MediaWrapper wrapper = usedMediaPlayers.get(instanceId);
+                    
+                    float speed = intent.getFloatExtra(EXTRA_SPEED, 1f);
+
+                    try {
+                        PlaybackParams params = wrapper.player.getPlaybackParams();
+                        params.setSpeed(speed);
+                        wrapper.player.setPlaybackParams(params);
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                        throw e;
+                    }
+
+                    break;
+                }
             }
 
 
@@ -403,6 +423,15 @@ public class BackgroundAudioService extends Service {
         intent.putExtra(EXTRA_INSTANCE_ID, id);
         intent.setAction(ACTION_SET_LOOP);
         intent.putExtra(EXTRA_LOOP, value);
+
+        context.startService(intent);
+    }
+
+    private static void setSpeed(Context context, int id, float speed) {
+        Intent intent = new Intent(context, BackgroundAudioService.class);
+        intent.putExtra(EXTRA_INSTANCE_ID, id);
+        intent.setAction(ACTION_SET_SPEED);
+        intent.putExtra(EXTRA_SPEED, speed);
 
         context.startService(intent);
     }

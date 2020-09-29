@@ -23,10 +23,12 @@ namespace BackgroundAudio.Base
 
         public abstract void SetVolume(float volume);
         public abstract void SetLoop(bool value);
+        public abstract void SetSpeed(float speed);
 
         public abstract float GetCurrentPosition();
         public abstract float GetDuration();
         public abstract float GetVolume();
+        public abstract float GetSpeed();
 
         public abstract bool IsLooping();
         public abstract bool IsPlaying();
